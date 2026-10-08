@@ -1,0 +1,818 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>LegalSaathi</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap">
+
+<style>
+/* ── Token system ─────────────────────────────────────────────────────────── */
+/* Layout: centered single-column with sticky header, card-based results area */
+:root {
+  --bg:        #F7F6F3;
+  --surface:   #FFFFFF;
+  --border:    #E5E2DC;
+  --fg:        #1A1916;
+  --fg-muted:  #6B6760;
+  --accent:    #1C5C3B;
+  --accent-lt: #E8F2EC;
+  --danger:    #B03A2E;
+  --danger-lt: #FBEAE8;
+  --warn:      #8A5A00;
+  --warn-lt:   #FEF6E4;
+  --radius:    10px;
+  --shadow:    0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.05);
+
+  font-family: 'Inter', system-ui, sans-serif;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:        #131310;
+    --surface:   #1E1D1A;
+    --border:    #2D2C28;
+    --fg:        #F0EFE9;
+    --fg-muted:  #8A8880;
+    --accent:    #4CA870;
+    --accent-lt: #0D2518;
+    --danger:    #E07060;
+    --danger-lt: #2A1210;
+    --warn:      #D4A830;
+    --warn-lt:   #241900;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:        #131310;
+  --surface:   #1E1D1A;
+  --border:    #2D2C28;
+  --fg:        #F0EFE9;
+  --fg-muted:  #8A8880;
+  --accent:    #4CA870;
+  --accent-lt: #0D2518;
+  --danger:    #E07060;
+  --danger-lt: #2A1210;
+  --warn:      #D4A830;
+  --warn-lt:   #241900;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  min-height: 100%;
+  padding-inline: 16px;
+  padding-block: 0;
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 18px;
+  border-bottom: 1px solid var(--border);
+  margin-inline: -16px;
+  padding-inline: 16px;
+  gap: 12px;
+}
+
+.logo {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.logo-mark {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 1.5rem;
+  color: var(--accent);
+  letter-spacing: -.01em;
+}
+
+.logo-tag {
+  font-size: .7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--fg-muted);
+}
+
+.theme-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: .75rem;
+  color: var(--fg-muted);
+  font-weight: 500;
+}
+.theme-btn:hover { color: var(--fg); }
+
+/* ── Main ─────────────────────────────────────────────────────────────────── */
+main {
+  max-width: 680px;
+  margin-inline: auto;
+  padding-block: 40px 60px;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.hero-title {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: clamp(2rem, 6vw, 2.8rem);
+  line-height: 1.15;
+  text-wrap: balance;
+  color: var(--fg);
+  margin-bottom: 12px;
+}
+
+.hero-title em {
+  color: var(--accent);
+  font-style: italic;
+}
+
+.hero-sub {
+  font-size: .95rem;
+  color: var(--fg-muted);
+  line-height: 1.6;
+  max-width: 440px;
+  margin-inline: auto;
+}
+
+/* ── Upload card ──────────────────────────────────────────────────────────── */
+.upload-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 32px 28px;
+  margin-bottom: 28px;
+}
+
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  padding: 36px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  position: relative;
+}
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-lt);
+}
+
+.upload-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.upload-label {
+  font-size: .9rem;
+  color: var(--fg-muted);
+  line-height: 1.5;
+}
+
+.upload-label strong {
+  color: var(--accent);
+  cursor: pointer;
+}
+
+#file-input { display: none; }
+
+.file-chosen {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--accent-lt);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 14px;
+  font-size: .875rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.file-chosen .remove-file {
+  margin-left: auto;
+  cursor: pointer;
+  opacity: .6;
+  font-size: 1rem;
+  background: none;
+  border: none;
+  color: var(--accent);
+  padding: 0;
+}
+
+/* ── Controls row ─────────────────────────────────────────────────────────── */
+.controls {
+  display: flex;
+  gap: 14px;
+  margin-top: 20px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+label {
+  font-size: .75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--fg-muted);
+}
+
+.api-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+input[type="text"], input[type="password"], select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-size: .9rem;
+  color: var(--fg);
+  font-family: inherit;
+  width: 100%;
+  transition: border-color .2s;
+}
+input[type="text"]:focus, input[type="password"]:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.btn-analyze {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: .9rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity .2s, transform .1s;
+  align-self: flex-end;
+  min-width: 140px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-analyze:hover:not(:disabled) { opacity: .88; }
+.btn-analyze:active:not(:disabled) { transform: scale(.98); }
+.btn-analyze:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ── Secure processing note ───────────────────────────────────────────────── */
+.api-section {
+  background: var(--warn-lt);
+  border: 1px solid var(--warn);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-top: 16px;
+  font-size: .82rem;
+  color: var(--warn);
+}
+
+.api-section summary {
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.api-section[open] summary { margin-bottom: 12px; }
+
+.api-keys-grid {
+  display: grid;
+  gap: 12px;
+}
+
+/* ── Spinner ──────────────────────────────────────────────────────────────── */
+.spinner {
+  width: 18px; height: 18px;
+  border: 2.5px solid rgba(255,255,255,.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Results ──────────────────────────────────────────────────────────────── */
+#results { display: none; }
+
+.result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.doc-type-pill {
+  background: var(--accent-lt);
+  color: var(--accent);
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  padding: 4px 12px;
+  border-radius: 99px;
+  border: 1px solid var(--accent);
+}
+
+.lang-badge {
+  font-size: .78rem;
+  color: var(--fg-muted);
+  font-weight: 500;
+}
+
+.result-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.result-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: .8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .09em;
+  color: var(--fg-muted);
+}
+
+.result-card-body {
+  padding: 18px 20px;
+}
+
+.summary-text {
+  font-size: .95rem;
+  line-height: 1.7;
+  color: var(--fg);
+}
+
+.key-points {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.key-points li {
+  display: flex;
+  gap: 10px;
+  font-size: .9rem;
+  line-height: 1.55;
+  color: var(--fg);
+}
+
+.key-points li::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  margin-top: 7px;
+  flex-shrink: 0;
+}
+
+/* Red flags */
+.red-flags-card .result-card-header {
+  color: var(--danger);
+  border-bottom-color: var(--danger-lt);
+  background: var(--danger-lt);
+}
+
+.red-flag-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: .88rem;
+  line-height: 1.55;
+  color: var(--fg);
+}
+
+.red-flag-item:last-child { border-bottom: none; }
+
+.flag-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* No red flags */
+.no-flags {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--accent);
+  font-size: .9rem;
+  font-weight: 500;
+}
+
+/* Error */
+.error-box {
+  background: var(--danger-lt);
+  border: 1px solid var(--danger);
+  border-radius: 8px;
+  padding: 14px 16px;
+  font-size: .88rem;
+  color: var(--danger);
+  margin-bottom: 16px;
+  display: none;
+}
+
+/* ── How it works ─────────────────────────────────────────────────────────── */
+.how-section {
+  margin-top: 48px;
+  border-top: 1px solid var(--border);
+  padding-top: 36px;
+}
+
+.how-title {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-size: 1.3rem;
+  margin-bottom: 24px;
+  color: var(--fg);
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.step-num {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.step-title {
+  font-size: .875rem;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.step-desc {
+  font-size: .8rem;
+  color: var(--fg-muted);
+  line-height: 1.5;
+}
+
+/* ── Demo mode notice ─────────────────────────────────────────────────────── */
+.demo-notice {
+  background: var(--accent-lt);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: .82rem;
+  color: var(--accent);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+  .upload-card { padding: 20px 16px; }
+  .controls { flex-direction: column; }
+  .btn-analyze { width: 100%; }
+}
+</style>
+
+<!-- Header -->
+<header>
+  <div class="logo">
+    <span class="logo-mark">LegalSaathi</span>
+    <span class="logo-tag">Legal Simplifier</span>
+  </div>
+  <button class="theme-btn" id="theme-toggle">🌙 Dark</button>
+</header>
+
+<main>
+  <!-- Hero -->
+  <div class="hero">
+    <h1 class="hero-title">Understand your legal<br><em>documents in minutes</em></h1>
+    <p class="hero-sub">Upload any PDF — rent agreement, loan document, employment contract — and get a plain-language summary in your language.</p>
+  </div>
+
+  <!-- Upload Card -->
+  <div class="upload-card">
+
+    <!-- Demo notice -->
+    <div class="demo-notice" id="demo-notice">
+      🔒 <strong>Secure analysis:</strong> Your PDF is processed by LegalSaathi’s backend with Manus AI. No API key is needed.
+    </div>
+
+    <!-- Drop zone -->
+    <div class="upload-zone" id="drop-zone">
+      <span class="upload-icon">📄</span>
+      <div class="upload-label">
+        Drop your PDF here or <strong id="browse-btn">browse to upload</strong>
+      </div>
+      <input type="file" id="file-input" accept=".pdf">
+    </div>
+
+    <div id="file-chosen-area" hidden></div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="field">
+        <label for="lang-select">Output Language</label>
+        <select id="lang-select">
+          <option value="hi">हिंदी (Hindi)</option>
+          <option value="ta">தமிழ் (Tamil)</option>
+          <option value="te">తెలుగు (Telugu)</option>
+          <option value="kn">ಕನ್ನಡ (Kannada)</option>
+          <option value="bn">বাংলা (Bengali)</option>
+          <option value="mr">मराठी (Marathi)</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+      <button class="btn-analyze" id="analyze-btn" disabled>Analyse</button>
+    </div>
+
+    <!-- Try Demo button -->
+    <div style="margin-top:14px;text-align:center">
+      <button id="demo-btn" style="background:none;border:none;color:var(--accent);font-size:.85rem;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px;">
+        Try Demo (no API key needed)
+      </button>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-box" id="error-box"></div>
+
+  <!-- Results -->
+  <div id="results">
+    <div class="result-header">
+      <span class="doc-type-pill" id="doc-type-pill">Document</span>
+      <span class="lang-badge" id="lang-badge">Summary in Hindi</span>
+    </div>
+
+    <!-- Summary -->
+    <div class="result-card">
+      <div class="result-card-header">📋 Summary</div>
+      <div class="result-card-body">
+        <p class="summary-text" id="summary-text"></p>
+      </div>
+    </div>
+
+    <!-- Key Points -->
+    <div class="result-card">
+      <div class="result-card-header">✅ Key Points</div>
+      <div class="result-card-body">
+        <ul class="key-points" id="key-points-list"></ul>
+      </div>
+    </div>
+
+    <!-- Red Flags -->
+    <div class="result-card red-flags-card">
+      <div class="result-card-header">🚩 Red Flags</div>
+      <div class="result-card-body" id="red-flags-body"></div>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="how-section">
+    <h2 class="how-title">How it works</h2>
+    <div class="steps">
+      <div class="step">
+        <span class="step-num">Step 01</span>
+        <div class="step-title">Upload PDF</div>
+        <p class="step-desc">Text-based PDFs are supported; image-only scans need OCR first.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">Step 02</span>
+        <div class="step-title">AI Reads It</div>
+        <p class="step-desc">Manus AI reads the meaning and identifies risky clauses.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">Step 03</span>
+        <div class="step-title">Localized</div>
+        <p class="step-desc">Manus AI writes the result in your chosen language.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">Step 04</span>
+        <div class="step-title">Plain Summary</div>
+        <p class="step-desc">You get a simple summary and red-flagged clauses to watch out for.</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+// ── Theme toggle ───────────────────────────────────────────────────────────
+const root = document.documentElement;
+const themeBtn = document.getElementById('theme-toggle');
+let theme = 'system';
+try { theme = localStorage.getItem('ls-theme') || 'system'; } catch(e){}
+
+function applyTheme(t) {
+  theme = t;
+  if (t === 'dark') { root.dataset.theme = 'dark'; themeBtn.textContent = '☀️ Light'; }
+  else if (t === 'light') { root.dataset.theme = 'light'; themeBtn.textContent = '🌙 Dark'; }
+  else { delete root.dataset.theme; themeBtn.textContent = '🌙 Dark'; }
+  try { localStorage.setItem('ls-theme', t); } catch(e){}
+}
+
+applyTheme(theme);
+themeBtn.addEventListener('click', () => applyTheme(theme === 'dark' ? 'light' : 'dark'));
+
+// ── File upload ────────────────────────────────────────────────────────────
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+const browseBtn = document.getElementById('browse-btn');
+const fileChosenArea = document.getElementById('file-chosen-area');
+const analyzeBtn = document.getElementById('analyze-btn');
+let selectedFile = null;
+
+browseBtn.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('click', (e) => { if (e.target !== browseBtn) fileInput.click(); });
+
+fileInput.addEventListener('change', () => {
+  if (fileInput.files[0]) setFile(fileInput.files[0]);
+});
+
+dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type === 'application/pdf') setFile(f);
+  else showError('Please drop a PDF file.');
+});
+
+function setFile(f) {
+  selectedFile = f;
+  dropZone.style.display = 'none';
+  fileChosenArea.hidden = false;
+  fileChosenArea.innerHTML = `
+    <div class="file-chosen">
+      📄 ${f.name} <span style="color:var(--fg-muted);font-weight:400">(${(f.size/1024).toFixed(1)} KB)</span>
+      <button class="remove-file" id="remove-file-btn">✕</button>
+    </div>`;
+  document.getElementById('remove-file-btn').addEventListener('click', clearFile);
+  analyzeBtn.disabled = false;
+}
+
+function clearFile() {
+  selectedFile = null;
+  fileInput.value = '';
+  dropZone.style.display = '';
+  fileChosenArea.hidden = true;
+  fileChosenArea.innerHTML = '';
+  analyzeBtn.disabled = true;
+}
+
+// ── Analyse ────────────────────────────────────────────────────────────────
+analyzeBtn.addEventListener('click', async () => {
+  if (!selectedFile) return;
+  const lang = document.getElementById('lang-select').value;
+  setLoading(true);
+  hideError();
+  document.getElementById('results').style.display = 'none';
+
+  try {
+    const formData = new FormData();
+    formData.append('document', selectedFile, selectedFile.name);
+    formData.append('lang', lang);
+    const response = await fetch('/api/analyze', { method: 'POST', body: formData });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok || !payload.ok) throw new Error(payload.error || 'Unable to analyze this document.');
+    displayResult(payload.result, lang);
+  } catch (err) {
+    showError(err.message || 'Unable to analyze this document.');
+  } finally {
+    setLoading(false);
+  }
+});
+
+// ── Display results ────────────────────────────────────────────────────────
+const LANG_NAMES = {hi:'Hindi',ta:'Tamil',te:'Telugu',kn:'Kannada',bn:'Bengali',mr:'Marathi',en:'English'};
+
+function displayResult(result, lang) {
+  document.getElementById('doc-type-pill').textContent = result.document_type || 'Document';
+  document.getElementById('lang-badge').textContent = `Summary in ${LANG_NAMES[lang] || 'English'}`;
+  document.getElementById('summary-text').textContent = result.summary || '';
+
+  const kpList = document.getElementById('key-points-list');
+  kpList.replaceChildren(...(result.key_points || []).map(point => {
+    const li = document.createElement('li');
+    const span = document.createElement('span');
+    span.textContent = point;
+    li.appendChild(span);
+    return li;
+  }));
+
+  const rfBody = document.getElementById('red-flags-body');
+  rfBody.replaceChildren();
+  if (!result.red_flags || result.red_flags.length === 0) {
+    const noFlags = document.createElement('div');
+    noFlags.className = 'no-flags';
+    noFlags.textContent = '✅ No major red flags detected.';
+    rfBody.appendChild(noFlags);
+  } else {
+    result.red_flags.forEach(flag => {
+      const row = document.createElement('div');
+      row.className = 'red-flag-item';
+      const icon = document.createElement('span');
+      icon.className = 'flag-icon';
+      icon.textContent = '⚠️';
+      const text = document.createElement('span');
+      text.textContent = flag;
+      row.append(icon, text);
+      rfBody.appendChild(row);
+    });
+  }
+
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── Demo mode ──────────────────────────────────────────────────────────────
+document.getElementById('demo-btn').addEventListener('click', () => {
+  const demoData = {
+    document_type: 'Rent Agreement',
+    summary: 'यह एक किराया समझौता है जिसमें आपको ₹12,000 प्रति माह किराया देना होगा। समझौता 11 महीने के लिए है और इसमें 2 महीने की सुरक्षा राशि जमा करनी होगी। मकान मालिक को 30 दिन पहले सूचना देकर समझौता समाप्त किया जा सकता है।',
+    key_points: [
+      'किराया: ₹12,000 प्रति माह',
+      'अवधि: 11 महीने (1 जनवरी 2025 से)',
+      'सुरक्षा जमा: ₹24,000 (2 महीने का किराया)',
+      'समझौता समाप्त करने के लिए 30 दिन पहले सूचना देनी होगी',
+      'बिजली और पानी का बिल किरायेदार देगा'
+    ],
+    red_flags: [
+      'मकान मालिक बिना किसी कारण के केवल 7 दिन की नोटिस पर आपको बाहर निकाल सकता है — यह आपके लिए बहुत कम समय है।',
+      'सभी मरम्मत का खर्च (दीवारें, छत सहित) किरायेदार को देना होगा — यह सामान्यतः मकान मालिक की जिम्मेदारी होती है।',
+      'अनुबंध स्वचालित रूप से नवीनीकृत होता है — यदि आप समय पर नोटिस नहीं देते, तो आप फंस सकते हैं।'
+    ]
+  };
+  document.getElementById('lang-select').value = 'hi';
+  displayResult(demoData, 'hi');
+  document.getElementById('demo-notice').innerHTML = '✅ <strong>Demo result shown below.</strong> Upload a real PDF whenever you are ready for a Manus AI analysis.';
+});
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function setLoading(on) {
+  if (on) {
+    analyzeBtn.disabled = true;
+    analyzeBtn.innerHTML = `<div class="spinner"></div> Analysing…`;
+  } else {
+    analyzeBtn.disabled = false;
+    analyzeBtn.innerHTML = 'Analyse';
+  }
+}
+
+function showError(msg) {
+  const box = document.getElementById('error-box');
+  box.textContent = msg;
+  box.style.display = 'block';
+}
+
+function hideError() {
+  document.getElementById('error-box').style.display = 'none';
+}
+</script>
+
+</body></html>
