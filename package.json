@@ -2,7 +2,7 @@
   "name": "legalsaathi",
   "version": "1.0.0",
   "private": true,
-  "description": "Plain-language legal document assistant powered by Manus AI",
+  "description": "Plain-language legal document assistant powered by a secure AI service",
   "type": "commonjs",
   "scripts": {
     "start": "node server.js"

@@ -133,7 +133,7 @@ async function analyzeDocument(pdfBuffer, languageCode) {
   const prompt = `You are LegalSaathi, a careful legal-document explainer for people in India. Analyze the document below and return ONLY valid JSON with exactly these keys: document_type (string), summary (3-5 plain-language sentences), key_points (array of 4-7 concise strings), red_flags (array of risky or unusual clauses with a short reason, or an empty array). Write every value in ${language}. Use simple language suitable for a Class 8 reader. Do not invent facts and do not give a definitive legal opinion. Add a brief practical caution inside the summary when the document is ambiguous.\n\nDocument text:\n${text.slice(0, 18000)}`;
   const apiUrl = process.env.MANUS_API_URL;
   const apiKey = process.env.MANUS_API_KEY;
-  if (!apiUrl || !apiKey) throw new Error('The Manus AI service is not available in this environment.');
+  if (!apiUrl || !apiKey) throw new Error('The AI service is not available in this environment.');
 
   const requestBody = {
     messages: [
@@ -150,9 +150,9 @@ async function analyzeDocument(pdfBuffer, languageCode) {
     body: JSON.stringify(requestBody)
   });
   const data = await response.json().catch(() => ({}));
-  if (!response.ok || data.error) throw new Error(data.error?.message || 'The Manus AI service could not analyze this document.');
+  if (!response.ok || data.error) throw new Error(data.error?.message || 'The AI service could not analyze this document.');
   const content = data.choices?.[0]?.message?.content;
-  if (!content) throw new Error('The Manus AI service returned no analysis. Please try again.');
+  if (!content) throw new Error('The AI service returned no analysis. Please try again.');
   return validateAnalysis(extractJson(content), language);
 }
 

@@ -3,7 +3,7 @@
 - [ ] Preserve the existing LegalSaathi interface, branding, and demo experience.
 - [ ] Allow users to upload a PDF document for analysis.
 - [ ] Let users choose the language used for the generated results.
-- [ ] Analyze uploaded documents with a Manus-managed AI model through secure server-side calls, with no Gemini or Google Translate API keys required from end users or exposed in the browser.
+- [ ] Analyze uploaded documents with a secure server-side AI service, with no provider credentials required from end users or exposed in the browser.
 - [ ] Display a plain-language summary of the uploaded document.
 - [ ] Present the document's key points in a clear, scannable format.
 - [ ] Identify and display the document type.

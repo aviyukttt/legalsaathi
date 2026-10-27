@@ -23,7 +23,7 @@ Legal Sathi is an informational document assistant, not a lawyer, law firm, or s
 ### Requirements
 
 - Node.js 20 or newer
-- A Manus-compatible runtime with `MANUS_API_URL` and `MANUS_API_KEY` available to the server
+- An OpenAI-compatible runtime with the server-side AI environment configured
 
 ### Install and run
 

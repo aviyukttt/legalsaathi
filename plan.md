@@ -1,13 +1,13 @@
 # LegalSaathi implementation plan
 
 ## Product scope
-LegalSaathi is a single-page document assistant that preserves the supplied interface and demo experience. Users upload a PDF, choose an output language, and receive a plain-language summary, key points, document type, and red flags. The browser never receives or asks for Gemini, Google Translate, or Manus server credentials.
+LegalSaathi is a single-page document assistant that preserves the supplied interface and demo experience. Users upload a PDF, choose an output language, and receive a plain-language summary, key points, document type, and red flags. The browser never receives or asks for Gemini, Google Translate, or server credentials.
 
 ## Implementation approach
 - Keep the supplied HTML/CSS visual language and responsive layout in `public/index.html`.
 - Add a small Node.js HTTP server in `server.js` with `POST /api/analyze` and unauthenticated `GET /_app/health`.
-- Accept a bounded multipart PDF upload, parse text with `pdf-parse`, and call the Manus OpenAI-compatible LLM endpoint from the server using `MANUS_API_URL` and `MANUS_API_KEY` supplied by the managed runtime.
-- Ask the selected Manus model to return strict JSON-shaped legal analysis directly in the requested language, avoiding a separate translation provider and avoiding browser-exposed credentials.
+- Accept a bounded multipart PDF upload, parse text with `pdf-parse`, and call the configured OpenAI-compatible LLM endpoint from the server using `MANUS_API_URL` and `MANUS_API_KEY` supplied by the managed runtime.
+- Ask the selected AI model to return strict JSON-shaped legal analysis directly in the requested language, avoiding a separate translation provider and avoiding browser-exposed credentials.
 - Serve the static page and `public/manus-routes.json` from the same server so Preview and production use the same origin and relative browser requests.
 - Publish as a container with a committed Dockerfile; use Node 22, install the locked dependency set, honor `PORT`, and expose the health endpoint.
 
@@ -28,7 +28,7 @@ LegalSaathi is a single-page document assistant that preserves the supplied inte
 ## Project structure
 - `public/index.html` — supplied LegalSaathi UI, updated to call the secure backend.
 - `public/manus-routes.json` — the complete page route manifest.
-- `server.js` — static serving, upload parsing, PDF text extraction, Manus AI request, validation, and health endpoint.
+- `server.js` — static serving, upload parsing, PDF text extraction, AI request, validation, and health endpoint.
 - `package.json` / `package-lock.json` — pinned runtime dependency and start script.
 - `Dockerfile` — reproducible production image and entrypoint.
 - `app.config.ts` — platform project logo metadata.
@@ -36,5 +36,5 @@ LegalSaathi is a single-page document assistant that preserves the supplied inte
 
 ## Material constraints
 - The app does not persist documents or analysis results; uploaded PDFs are processed in memory and discarded after the request.
-- The AI service is Manus-managed and uses project-provided runtime credentials. No user-supplied API key is required.
+- The AI service is managed and uses project-provided runtime credentials. No user-supplied API key is required.
 - PDF extraction requires selectable text in the uploaded document. The server returns a clear recovery message for image-only scans rather than claiming OCR support it does not provide.
